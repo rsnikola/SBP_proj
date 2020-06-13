@@ -20,7 +20,7 @@ db.getCollection('steam_app_data').aggregate([
             "publishers": {$split: ["$publishers", "["]}, 
             "categories": {$split: ["$categories", "[{"]}, 
             "genres": {$split: ["$genres", "[{"]}, 
-            "recommendations": "$recommendations", 
+            "recommendations": {$split: ["$recommendations", "{'total': "]}, 
             "positive": "$spy_data.positive", 
             "negative": "$spy_data.negative",
             "price": "$spy_data.price", 
@@ -42,7 +42,7 @@ db.getCollection('steam_app_data').aggregate([
             "publishers": {$split: [{$arrayElemAt: ["$publishers", 1]}, "]"]}, 
             "categories": {$split: [{$arrayElemAt: ["$categories", 1]}, "}]"]}, 
             "genres": {$split: [{$arrayElemAt: ["$genres", 1]}, "}]"]}, 
-            "recommendations": "$recommendations", 
+            "recommendations": {$split: [{$arrayElemAt: ["$recommendations", 1]}, "}"]}, 
             "positive": {$arrayElemAt: ["$positive", 0]}, 
             "negative": {$arrayElemAt: ["$negative", 0]},
             "price": {$arrayElemAt: ["$price", 0]}, 
@@ -64,7 +64,7 @@ db.getCollection('steam_app_data').aggregate([
             "publishers": {$arrayElemAt: ["$publishers", 0]}, 
             "categories": {$arrayElemAt: ["$categories", 0]}, 
             "genres": {$arrayElemAt: ["$genres", 0]}, 
-            "recommendations": "$recommendations", 
+            "recommendations": {$arrayElemAt: ["$recommendations", 0]}, 
             "positive": "$positive", 
             "negative": "$negative",
             "price": "$price", 
@@ -111,7 +111,7 @@ db.getCollection('steam_app_data').aggregate([
             "publishers": {$split: ["$publishers", ", "]}, 
             "categories": {$split: ["$categories", "}, {"]}, 
             "genres": {$split: ["$genres", "}, {"]}, 
-            "recommendations": "$recommendations", 
+            "recommendations": {$toInt: "$recommendations"}, 
             "positive": "$positive", 
             "negative": "$negative",
             "price": "$price", 
@@ -141,4 +141,8 @@ db.getCollection('steam_app_data').aggregate([
             "spy_data.median_forever": "$median_forever"
         }
     }
+//     ,
+//     {
+//         $out: "steam_aggregate"
+//     }
 ]);
