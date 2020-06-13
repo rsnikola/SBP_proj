@@ -375,7 +375,77 @@ db.getCollection('steam_app_data').aggregate([
             "median_forever": {$first: "$median_forever"}
         }
     }
-    
+    , 
+    {
+        $unwind: "$developers"
+    }
+    ,
+    {
+        $project: {
+            "owners_min": "$owners_min", 
+            "owners_max": "$owners_max", 
+            "name": "$name", 
+            "required_age": "$required_age", 
+            "is_free": "$is_free", 
+            "controller_support": "$controller_support", 
+            "dlc": "$dlc", 
+            "developers": {$split: ["$developers", "'"]}, 
+            "publishers": "$publishers", 
+            "categories": "$categories", 
+            "genres": "$genres", 
+            "recommendations": "$recommendations", 
+            "positive": "$positive", 
+            "negative": "$negative",
+            "price": "$price", 
+            "average_forever": "$average_forever", 
+            "median_forever": "$median_forever"
+        }
+    }
+    ,
+    {
+        $project: {
+            "owners_min": "$owners_min", 
+            "owners_max": "$owners_max", 
+            "name": "$name", 
+            "required_age": "$required_age", 
+            "is_free": "$is_free", 
+            "controller_support": "$controller_support", 
+            "dlc": "$dlc", 
+            "developers": {$arrayElemAt: ["$developers", 1]}, 
+            "publishers": "$publishers", 
+            "categories": "$categories", 
+            "genres": "$genres", 
+            "recommendations": "$recommendations", 
+            "positive": "$positive", 
+            "negative": "$negative",
+            "price": "$price", 
+            "average_forever": "$average_forever", 
+            "median_forever": "$median_forever"
+        }
+    }
+    ,
+    {
+        $group: {
+            "_id": "$_id",
+            "name": {$first: "$name"}, 
+            "required_age": {$first: "$required_age"}, 
+            "is_free": {$first: "$is_free"}, 
+            "controller_support": {$first: "$controller_support"}, 
+            "dlc": {$first: "$dlc"}, 
+            "developers": {$push: "$developers"}, 
+            "publishers": {$first: "$publishers"}, 
+            "categories": {$first: "$categories"}, 
+            "genres": {$first: "$genres"}, 
+            "recommendations": {$first: "$recommendations"}, 
+            "positive": {$first: "$positive"}, 
+            "negative": {$first: "$negative"}, 
+            "owners_min": {$first: "$owners_min"}, 
+            "owners_max": {$first: "$owners_max"}, 
+            "price": {$first: "$price"}, 
+            "average_forever": {$first: "$average_forever"}, 
+            "median_forever": {$first: "$median_forever"}
+        }
+    }
     
     
     
