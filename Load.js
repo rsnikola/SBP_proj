@@ -517,6 +517,28 @@ db.getCollection('steam_app_data').aggregate([
             "median_forever": {$first: "$median_forever"}
         }
     }
+    ,
+    {
+        $project: {
+            "name": "$name", 
+            "required_age": "$required_age", 
+            "is_free": "$is_free", 
+            "controller_support": "$controller_support", 
+            "dlc": "$dlc", 
+            "developers": "$developers", 
+            "publishers": "$publishers", 
+            "categories": "$categories", 
+            "genres": "$genres", 
+            "recommendations": "$recommendations", 
+            "positive": "$positive", 
+            "negative": "$negative",
+            "owners_min": "$owners_min", 
+            "owners_max": "$owners_max", 
+            "price": "$price", 
+            "average_forever": "$average_forever", 
+            "median_forever": "$median_forever"
+        }
+    }
     
     
     
