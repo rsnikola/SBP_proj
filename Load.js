@@ -7,6 +7,10 @@ db.getCollection('steam_app_data').aggregate([
                 as: 'spy_data'
             }
     }
+    ,
+    {
+        $match: {"name": "Counter-Strike"}
+    }
     ,
     {
         $project: {
@@ -140,10 +144,54 @@ db.getCollection('steam_app_data').aggregate([
             "spy_data.average_forever": "$average_forever", 
             "spy_data.median_forever": "$median_forever"
         }
-    }
-    ,
-    {
-        $unwind: "$categories"
+    }
+    ,
+    {
+        $unwind: "$categories"
+    }
+    ,
+    {
+        $project: {
+            "owners_min": {$toInt: "$owners_min"}, 
+            "owners_max": {$toInt: "$owners_max"}, 
+            "name": "$name", 
+            "required_age": "$required_age", 
+            "is_free": "$is_free", 
+            "controller_support": "$controller_support", 
+            "dlc": "$dlc", 
+            "developers": "$developers", 
+            "publishers": "$publishers", 
+            "categories": {$split: ["$categories", "'description': '"]}, 
+            "genres": "$genres", 
+            "recommendations": "$recommendations", 
+            "spy_data.positive": "$positive", 
+            "spy_data.negative": "$negative",
+            "spy_data.price": "$price", 
+            "spy_data.average_forever": "$average_forever", 
+            "spy_data.median_forever": "$median_forever"
+        }
+    }
+    ,
+    {
+        $project: {
+            "owners_min": {$toInt: "$owners_min"}, 
+            "owners_max": {$toInt: "$owners_max"}, 
+            "name": "$name", 
+            "required_age": "$required_age", 
+            "is_free": "$is_free", 
+            "controller_support": "$controller_support", 
+            "dlc": "$dlc", 
+            "developers": "$developers", 
+            "publishers": "$publishers", 
+            "categories": {$arrayElemAt: ["$categories", 1]}, 
+            "genres": "$genres", 
+            "recommendations": "$recommendations", 
+            "spy_data.positive": "$positive", 
+            "spy_data.negative": "$negative",
+            "spy_data.price": "$price", 
+            "spy_data.average_forever": "$average_forever", 
+            "spy_data.median_forever": "$median_forever"
+        }
     }
     ,
     {
@@ -157,7 +205,7 @@ db.getCollection('steam_app_data').aggregate([
             "dlc": "$dlc", 
             "developers": "$developers", 
             "publishers": "$publishers", 
-            "categories": {$split: ["$categories", "'description': '"]}, 
+            "categories": {$split: ["$categories", "'"]}, 
             "genres": "$genres", 
             "recommendations": "$recommendations", 
             "spy_data.positive": "$positive", 
@@ -179,7 +227,7 @@ db.getCollection('steam_app_data').aggregate([
             "dlc": "$dlc", 
             "developers": "$developers", 
             "publishers": "$publishers", 
-            "categories": {$arrayElemAt: ["$categories", 1]}, 
+            "categories": {$arrayElemAt: ["$categories", 0]}, 
             "genres": "$genres", 
             "recommendations": "$recommendations", 
             "spy_data.positive": "$positive", 
@@ -187,16 +235,59 @@ db.getCollection('steam_app_data').aggregate([
             "spy_data.price": "$price", 
             "spy_data.average_forever": "$average_forever", 
             "spy_data.median_forever": "$median_forever"
-        }
-    }
-    ,
-    {
-        $group: {
-            "_id": "$_id"
         }
     }
+    ,
+    {
+        $group: {
+            "_id": "$_id",
+            "name": {$first: "$name"}, 
+            "required_age": {$first: "$required_age"}, 
+            "is_free": {$first: "$is_free"}, 
+            "controller_support": {$first: "$controller_support"}, 
+            "dlc": {$first: "$dlc"}, 
+            "developers": {$first: "$developers"}, 
+            "publishers": {$first: "$publishers"}, 
+            "categories": {$push: "$categories"}, 
+            "genres": {$first: "$genres"}, 
+            "recommendations": {$first: "$recommendations"}, 
+            "positive": {$first: "$positive"}, 
+            "negative": {$first: "$negative"}, 
+            "owners_min": {$first: "%owners_min"}, 
+            "owners_max": {$first: "%owners_max"}, 
+            "price": {$first: "$price"}, 
+            "average_forever": {$first: "$average_forever"}, 
+            "median_forever": {$first: "$median_forever"}
+        }
+    }
+    , 
+    
 //     ,
 //     {
 //         $out: "steam_aggregate"
 //     }
 ]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
