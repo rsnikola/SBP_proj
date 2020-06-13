@@ -140,6 +140,60 @@ db.getCollection('steam_app_data').aggregate([
             "spy_data.average_forever": "$average_forever", 
             "spy_data.median_forever": "$median_forever"
         }
+    }
+    ,
+    {
+        $unwind: "$categories"
+    }
+    ,
+    {
+        $project: {
+            "owners_min": {$toInt: "$owners_min"}, 
+            "owners_max": {$toInt: "$owners_max"}, 
+            "name": "$name", 
+            "required_age": "$required_age", 
+            "is_free": "$is_free", 
+            "controller_support": "$controller_support", 
+            "dlc": "$dlc", 
+            "developers": "$developers", 
+            "publishers": "$publishers", 
+            "categories": {$split: ["$categories", "'description': '"]}, 
+            "genres": "$genres", 
+            "recommendations": "$recommendations", 
+            "spy_data.positive": "$positive", 
+            "spy_data.negative": "$negative",
+            "spy_data.price": "$price", 
+            "spy_data.average_forever": "$average_forever", 
+            "spy_data.median_forever": "$median_forever"
+        }
+    }
+    ,
+    {
+        $project: {
+            "owners_min": {$toInt: "$owners_min"}, 
+            "owners_max": {$toInt: "$owners_max"}, 
+            "name": "$name", 
+            "required_age": "$required_age", 
+            "is_free": "$is_free", 
+            "controller_support": "$controller_support", 
+            "dlc": "$dlc", 
+            "developers": "$developers", 
+            "publishers": "$publishers", 
+            "categories": {$arrayElemAt: ["$categories", 1]}, 
+            "genres": "$genres", 
+            "recommendations": "$recommendations", 
+            "spy_data.positive": "$positive", 
+            "spy_data.negative": "$negative",
+            "spy_data.price": "$price", 
+            "spy_data.average_forever": "$average_forever", 
+            "spy_data.median_forever": "$median_forever"
+        }
+    }
+    ,
+    {
+        $group: {
+            "_id": "$_id"
+        }
     }
 //     ,
 //     {
