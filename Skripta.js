@@ -46,24 +46,29 @@ function getValveRatingAverage () {
             }
             ,
             {
-                $match: {
-                    "publishers": "Valve"
+                $group: {
+                    "_id": "$publishers", 
+                    "rating": {$avg: "$rating"}
                 }
             }
             ,
             {
-                $group: {
-                    "_id": null, 
-                    "averageRating": {$avg: "$rating"}
+                $match: {
+                    "_id": "Valve"
                 }
             }
         ]
     );
                  
-    retVal = retVal.map( function(retVal) { return retVal.averageRating; })[0];
+    retVal = retVal.map( function(retVal) { return retVal.rating; })[0];
 
     return retVal;
 };
+
+
+
+
+
 
 
 
@@ -95,27 +100,6 @@ function pitanje1 () {
 
 
 pitanje1();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
