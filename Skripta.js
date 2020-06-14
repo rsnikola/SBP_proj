@@ -156,6 +156,36 @@ function getDevWithMostHoursMean () {
 }
 
 
+function getPublisherWithMostDlc () {
+    var retVal = db.steam_aggregate.aggregate(
+        [
+            {
+                $project: {
+                    "publishers": "$publishers", 
+                    "dlc": {$size: {"$ifNull": ["$dlc", []]}}, 
+                    
+                }
+            }
+            ,
+            {
+                $group: {"_id": "$publishers", "dlc": {$sum: "$dlc"}}
+            }
+            ,
+            {
+                $sort: {"dlc": -1}
+            }
+            ,
+            {
+                $limit: 1
+            }
+        ]
+    );
+            
+    return retVal.map( function(retVal) { return retVal._id; })[0];
+}
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Ispisne funkcije
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -193,6 +223,20 @@ function pitanje2 () {
 }
 
 
+function pitanje3 () {
+    var pabliserSaNajviseDlc = getPublisherWithMostDlc ();
+    
+    print ("Pitanje 3");
+    print ("");
+    print ("Koji izdavaci imaju najveci broj dlc?");
+    print ("Upit je pokazao da je u pitanju: " + pabliserSaNajviseDlc + ". ");
+    print ("");
+    print ("Zakljucak: ");
+    print ("Izdavac sa najviše DLC je: " + pabliserSaNajviseDlc + ".");
+    print ("");
+}
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Poziv ispisa 
@@ -203,6 +247,7 @@ pitanje1();
 
 pitanje2();
 
+pitanje3();
 
 
 
@@ -211,19 +256,6 @@ pitanje2();
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Development 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
