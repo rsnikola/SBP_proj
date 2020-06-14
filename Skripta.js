@@ -66,10 +66,94 @@ function getValveRatingAverage () {
 };
 
 
+function getDevWithMostHoursAverage () {
+    var retVal = db.steam_aggregate.aggregate(
+        [
+            {
+                $project: {
+                    "developers": "$developers", 
+                    "average_forever": {$max: "$spy_data.average_forever"}, 
+                    "name": "$name"
+                }
+            }
+            ,
+            {
+                $group: {
+                    "_id": "$developers", 
+                    "average_forever": {$push: "$average_forever"}
+                }
+            }
+            ,
+            {
+                $project: {
+                    "_id": "$_id", 
+                    "average_forever": {$max: "$average_forever"}
+                }
+            }
+            ,
+            {
+                $sort: {"average_forever": -1}
+            }
+            ,
+            {
+                $limit: 1
+            }
+            ,
+            {
+                $project: {
+                    "_id": "$_id"
+                }
+            }
+        ]
+    );
+    
+    return retVal.map( function(retVal) { return retVal._id; })[0];
+}
 
 
-
-
+function getDevWithMostHoursMean () {
+    var retVal = db.steam_aggregate.aggregate(
+        [
+            {
+                $project: {
+                    "developers": "$developers", 
+                    "mean_forever": {$max: "$spy_data.median_forever"}, 
+                    "name": "$name"
+                }
+            }
+            ,
+            {
+                $group: {
+                    "_id": "$developers", 
+                    "mean_forever": {$push: "$mean_forever"}
+                }
+            }
+            ,
+            {
+                $project: {
+                    "_id": "$_id", 
+                    "mean_forever": {$max: "$mean_forever"}
+                }
+            }
+            ,
+            {
+                $sort: {"mean_forever": -1}
+            }
+            ,
+            {
+                $limit: 1
+            }
+            ,
+            {
+                $project: {
+                    "_id": "$_id"
+                }
+            }
+        ]
+    );
+    
+    return retVal.map( function(retVal) { return retVal._id; })[0];
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -93,6 +177,22 @@ function pitanje1 () {
 }
 
 
+function pitanje2 () {
+    var devSaNajviseProsecno = getDevWithMostHoursAverage ();
+    var devSaNajviseSrednje = getDevWithMostHoursMean ();
+    
+    print ("Pitanje 2");
+    print ("");
+    print ("Koji razvojni studio ima najviše sati u svojim igrama?");
+    print ("Razvoji studio sa najvecim prosekom sati u igrama je: " + devSaNajviseProsecno);
+    print ("Razvoji studio sa najvecom srednjom vrednosti sati u igrama je: " + devSaNajviseSrednje);
+    print ("");
+    print ("Zakljucak: ");
+    print ("Zavisno od kriterijuma, odgovor je ili " + devSaNajviseProsecno + ", ili " + devSaNajviseSrednje + ".");
+    print ("");
+}
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Poziv ispisa 
@@ -100,6 +200,19 @@ function pitanje1 () {
 
 
 pitanje1();
+
+pitanje2();
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Development 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 
 
