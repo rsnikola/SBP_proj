@@ -363,7 +363,95 @@ function prosecnaOcenaPlatnih () {
             
     return retVal.map( function(retVal) { return retVal.rating; })[0];
 }
-
+
+
+function countFreeGamesOwners () {
+    var retVal = db.steam_aggregate.aggregate(
+        [
+            {
+                $project: {
+                    "is_free": "$is_free", 
+                    "sum": { 
+                        $add: [
+                            "$spy_data.owners_min", "$spy_data.owners_max"
+                        ]
+                    }
+                }
+            }
+            ,
+            {
+                $project: {
+                    "is_free": "$is_free", 
+                    "average": { 
+                        $divide: [
+                            "$sum", 2
+                        ]
+                    }
+                }
+            }
+            ,
+            {
+                $group: {
+                    "_id": "$is_free", 
+                    "average": {$sum: "$average"}
+                }
+            }
+            ,
+            {
+                $match: {
+                    "_id": "True"
+                }
+            }
+        ]
+    );
+            
+    return retVal.map( function(retVal) { return retVal.average; })[0];
+}
+
+
+function countPaidGamesOwners () {
+    var retVal = db.steam_aggregate.aggregate(
+        [
+            {
+                $project: {
+                    "is_free": "$is_free", 
+                    "sum": { 
+                        $add: [
+                            "$spy_data.owners_min", "$spy_data.owners_max"
+                        ]
+                    }
+                }
+            }
+            ,
+            {
+                $project: {
+                    "is_free": "$is_free", 
+                    "average": { 
+                        $divide: [
+                            "$sum", 2
+                        ]
+                    }
+                }
+            }
+            ,
+            {
+                $group: {
+                    "_id": "$is_free", 
+                    "average": {$sum: "$average"}
+                }
+            }
+            ,
+            {
+                $match: {
+                    "_id": "False"
+                }
+            }
+        ]
+    );
+            
+    return retVal.map( function(retVal) { return retVal.average; })[0];
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Ispisne funkcije
@@ -380,7 +468,7 @@ function pitanje1 () {
     print ("Prosek svih proseka ocena pojedinacnih izdavackih kuca: " + prosekSvih);
     print ("Prosek svih ocena Valve igara: " + prosekValve);
     print ("");
-    print ("Zakljucak: ");
+    print ("Zakljcak: ");
     print ("Valve igre u proseku " + ((prosekSvih < prosekValve) ? ("jesu") : ("nisu")) + " bolje ocenjene od igara ostalih izdavackih kuca. ");
     print ("");
 }
@@ -446,7 +534,24 @@ function pitanje5 () {
     print ("Zakljucak: ");
     print ("Igre koje su besplatne " + ((besplatne > platne) ? ("jesu") : ("nisu")) + " bolje ocenjene od onih koje se placaju. ");
     print ("");
-}
+}
+
+
+function pitanje6 () {
+    var besplatne = countFreeGamesOwners();
+    var platne = countPaidGamesOwners();
+
+    print ("Pitanje 6");
+    print ("");
+    print ("Da li više korisnika igra besplatne igre?");
+    print ("Procenjen broj posedovanih besplatnih igara: " + besplatne);
+    print ("Procenjen broj posedovanih igara koje se placaju: " + platne);
+    print ("");
+    print ("Zakljucak: ");
+    print ("Igre koje su besplatne " + ((besplatne > platne) ? ("jesu") : ("nisu")) + " posedovane od strane više korisnika. ");
+    print ("");
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Poziv ispisa 
@@ -461,15 +566,15 @@ pitanje3();
 
 pitanje4();
 
-pitanje5();
+pitanje5();
+
+pitanje6();
 
  
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Development 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 
 
 
