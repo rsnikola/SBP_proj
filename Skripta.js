@@ -293,9 +293,7 @@ function getMostBangForBuckAvg () {
     );
             
     retVal = retVal.map( function(retVal) { return retVal._id; });
-    
     var temp = ["", "", "", "", "", "", "", "", "", ""];
-           
     for (var i = 0; i < 10; ++i) {
         temp[i] = retVal[i];
     }
@@ -303,156 +301,210 @@ function getMostBangForBuckAvg () {
     
     return retVal;
 }
-
-
-function prosecnaOcenaBesplatnih () {
-    var retVal = db.steam_aggregate.aggregate(
-        [
-            {
-                $project: {
-                    "is_free": "$is_free", 
-                    "rating": {$subtract: ["$spy_data.positive", "$spy_data.negative"]}
-                }
-            }
-            ,
-            {
-                $group: {
-                    "_id": "$is_free", 
-                    "rating": {$avg: "$rating"}
-                }
-            }
-            ,
-            {
-                $match: {
-                    "_id": "True"
-                }
-            }
-        ]
-    );
-    
-            
-    return retVal.map( function(retVal) { return retVal.rating; })[0];
-}
-
-
-function prosecnaOcenaPlatnih () {
-    var retVal = db.steam_aggregate.aggregate(
-        [
-            {
-                $project: {
-                    "is_free": "$is_free", 
-                    "rating": {$subtract: ["$spy_data.positive", "$spy_data.negative"]}
-                }
-            }
-            ,
-            {
-                $group: {
-                    "_id": "$is_free", 
-                    "rating": {$avg: "$rating"}
-                }
-            }
-            ,
-            {
-                $match: {
-                    "_id": "False"
-                }
-            }
-        ]
-    );
-    
-            
-    return retVal.map( function(retVal) { return retVal.rating; })[0];
-}
-
-
-function countFreeGamesOwners () {
-    var retVal = db.steam_aggregate.aggregate(
-        [
-            {
-                $project: {
-                    "is_free": "$is_free", 
-                    "sum": { 
-                        $add: [
-                            "$spy_data.owners_min", "$spy_data.owners_max"
-                        ]
-                    }
-                }
-            }
-            ,
-            {
-                $project: {
-                    "is_free": "$is_free", 
-                    "average": { 
-                        $divide: [
-                            "$sum", 2
-                        ]
-                    }
-                }
-            }
-            ,
-            {
-                $group: {
-                    "_id": "$is_free", 
-                    "average": {$sum: "$average"}
-                }
-            }
-            ,
-            {
-                $match: {
-                    "_id": "True"
-                }
-            }
-        ]
-    );
-            
-    return retVal.map( function(retVal) { return retVal.average; })[0];
-}
-
-
-function countPaidGamesOwners () {
-    var retVal = db.steam_aggregate.aggregate(
-        [
-            {
-                $project: {
-                    "is_free": "$is_free", 
-                    "sum": { 
-                        $add: [
-                            "$spy_data.owners_min", "$spy_data.owners_max"
-                        ]
-                    }
-                }
-            }
-            ,
-            {
-                $project: {
-                    "is_free": "$is_free", 
-                    "average": { 
-                        $divide: [
-                            "$sum", 2
-                        ]
-                    }
-                }
-            }
-            ,
-            {
-                $group: {
-                    "_id": "$is_free", 
-                    "average": {$sum: "$average"}
-                }
-            }
-            ,
-            {
-                $match: {
-                    "_id": "False"
-                }
-            }
-        ]
-    );
-            
-    return retVal.map( function(retVal) { return retVal.average; })[0];
-}
-
 
+
+function prosecnaOcenaBesplatnih () {
+    var retVal = db.steam_aggregate.aggregate(
+        [
+            {
+                $project: {
+                    "is_free": "$is_free", 
+                    "rating": {$subtract: ["$spy_data.positive", "$spy_data.negative"]}
+                }
+            }
+            ,
+            {
+                $group: {
+                    "_id": "$is_free", 
+                    "rating": {$avg: "$rating"}
+                }
+            }
+            ,
+            {
+                $match: {
+                    "_id": "True"
+                }
+            }
+        ]
+    );
+    
+            
+    return retVal.map( function(retVal) { return retVal.rating; })[0];
+}
+
+
+function prosecnaOcenaPlatnih () {
+    var retVal = db.steam_aggregate.aggregate(
+        [
+            {
+                $project: {
+                    "is_free": "$is_free", 
+                    "rating": {$subtract: ["$spy_data.positive", "$spy_data.negative"]}
+                }
+            }
+            ,
+            {
+                $group: {
+                    "_id": "$is_free", 
+                    "rating": {$avg: "$rating"}
+                }
+            }
+            ,
+            {
+                $match: {
+                    "_id": "False"
+                }
+            }
+        ]
+    );
+    
+            
+    return retVal.map( function(retVal) { return retVal.rating; })[0];
+}
+
+
+function countFreeGamesOwners () {
+    var retVal = db.steam_aggregate.aggregate(
+        [
+            {
+                $project: {
+                    "is_free": "$is_free", 
+                    "sum": { 
+                        $add: [
+                            "$spy_data.owners_min", "$spy_data.owners_max"
+                        ]
+                    }
+                }
+            }
+            ,
+            {
+                $project: {
+                    "is_free": "$is_free", 
+                    "average": { 
+                        $divide: [
+                            "$sum", 2
+                        ]
+                    }
+                }
+            }
+            ,
+            {
+                $group: {
+                    "_id": "$is_free", 
+                    "average": {$sum: "$average"}
+                }
+            }
+            ,
+            {
+                $match: {
+                    "_id": "True"
+                }
+            }
+        ]
+    );
+            
+    return retVal.map( function(retVal) { return retVal.average; })[0];
+}
+
+
+function countPaidGamesOwners () {
+    var retVal = db.steam_aggregate.aggregate(
+        [
+            {
+                $project: {
+                    "is_free": "$is_free", 
+                    "sum": { 
+                        $add: [
+                            "$spy_data.owners_min", "$spy_data.owners_max"
+                        ]
+                    }
+                }
+            }
+            ,
+            {
+                $project: {
+                    "is_free": "$is_free", 
+                    "average": { 
+                        $divide: [
+                            "$sum", 2
+                        ]
+                    }
+                }
+            }
+            ,
+            {
+                $group: {
+                    "_id": "$is_free", 
+                    "average": {$sum: "$average"}
+                }
+            }
+            ,
+            {
+                $match: {
+                    "_id": "False"
+                }
+            }
+        ]
+    );
+            
+    return retVal.map( function(retVal) { return retVal.average; })[0];
+}
+
+
+function getMostFrequentGenres () {
+    var retVal = db.steam_aggregate.aggregate(
+        [
+            {
+                $project: {
+                    "name": "$name",
+                    "genres": "$genres"
+                }
+            }
+            ,
+            {
+                $unwind:  "$genres"
+            }
+            ,
+            {
+                $group: {
+                    "_id": "$genres", 
+                    "name": {$push: "$name"}
+                }
+            }
+            ,
+            {
+                $project: {
+                    "_id": "$_id", 
+                    "number_of_games": {$size: "$name"}
+                }
+            }
+            ,
+            {
+                $sort: {"number_of_games": -1}
+            }
+            ,
+            {
+                $limit: 10
+            }
+            ,
+            {
+                $project: {
+                    "_id": "$_id"
+                }
+            }
+        ]
+    );
+            
+    var temp = ["", "", "", "", "", "", "", "", "", ""];
+    for (var i = 0; i < 10; ++i) {
+        temp[i] = retVal[i];
+    }
+    retVal = temp;
+    
+    return retVal;//.map( function(retVal) { return retVal._id; })[0];
+}
+
+getMostFrequentGenres();
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Ispisne funkcije
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -519,38 +571,38 @@ function pitanje4 () {
     print ("U zavisnosti od kriterijuma, najisplativijom igrom se može smatrati " + prosek[0] + ", tj. " + srednja[0] + ". ");
     print ("");
 }
-
 
-function pitanje5 () {
-    var besplatne = prosecnaOcenaBesplatnih();
-    var platne = prosecnaOcenaPlatnih();
-
-    print ("Pitanje 5");
-    print ("");
-    print ("Da li su besplatne igre bolje ocenjene od onih koje se naplacuju?");
-    print ("Prosecna ocena besplatnih igara: " + besplatne);
-    print ("Prosecna ocena igara koje je se placaju: " + platne);
-    print ("");
-    print ("Zakljucak: ");
-    print ("Igre koje su besplatne " + ((besplatne > platne) ? ("jesu") : ("nisu")) + " bolje ocenjene od onih koje se placaju. ");
-    print ("");
-}
-
-
-function pitanje6 () {
-    var besplatne = countFreeGamesOwners();
-    var platne = countPaidGamesOwners();
-
-    print ("Pitanje 6");
-    print ("");
-    print ("Da li više korisnika igra besplatne igre?");
-    print ("Procenjen broj posedovanih besplatnih igara: " + besplatne);
-    print ("Procenjen broj posedovanih igara koje se placaju: " + platne);
-    print ("");
-    print ("Zakljucak: ");
-    print ("Igre koje su besplatne " + ((besplatne > platne) ? ("jesu") : ("nisu")) + " posedovane od strane više korisnika. ");
-    print ("");
-}
+
+function pitanje5 () {
+    var besplatne = prosecnaOcenaBesplatnih();
+    var platne = prosecnaOcenaPlatnih();
+
+    print ("Pitanje 5");
+    print ("");
+    print ("Da li su besplatne igre bolje ocenjene od onih koje se naplacuju?");
+    print ("Prosecna ocena besplatnih igara: " + besplatne);
+    print ("Prosecna ocena igara koje je se placaju: " + platne);
+    print ("");
+    print ("Zakljucak: ");
+    print ("Igre koje su besplatne " + ((besplatne > platne) ? ("jesu") : ("nisu")) + " bolje ocenjene od onih koje se placaju. ");
+    print ("");
+}
+
+
+function pitanje6 () {
+    var besplatne = countFreeGamesOwners();
+    var platne = countPaidGamesOwners();
+
+    print ("Pitanje 6");
+    print ("");
+    print ("Da li više korisnika igra besplatne igre?");
+    print ("Procenjen broj posedovanih besplatnih igara: " + besplatne);
+    print ("Procenjen broj posedovanih igara koje se placaju: " + platne);
+    print ("");
+    print ("Zakljucak: ");
+    print ("Igre koje su besplatne " + ((besplatne > platne) ? ("jesu") : ("nisu")) + " posedovane od strane više korisnika. ");
+    print ("");
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -558,16 +610,16 @@ function pitanje6 () {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-pitanje1();
+pitanje1();
 
 pitanje2();
 
 pitanje3();
 
 pitanje4();
-
-pitanje5();
-
+
+pitanje5();
+
 pitanje6();
 
  
@@ -580,12 +632,144 @@ pitanje6();
 
 
 
+
+db.steam_aggregate.aggregate(
+        [
+            {
+                $project: {
+                    "name": "$name",
+                    "genres": "$genres"
+                }
+            }
+            ,
+            {
+                $unwind:  "$genres"
+            }
+            ,
+            {
+                $group: {
+                    "_id": "$genres", 
+                    "name": {$push: "$name"}
+                }
+            }
+            ,
+            {
+                $project: {
+                    "_id": "$_id", 
+                    "number_of_games": {$size: "$name"}
+                }
+            }
+            ,
+            {
+                $sort: {"number_of_games": -1}
+            }
+            ,
+            {
+                $limit: 5
+            }
+            ,
+            {
+                $project: {
+                    "_id": "$_id"
+                }
+            }
+        ]
+    );
 
 
 
 
 
 
-
-
-
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
