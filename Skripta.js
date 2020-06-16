@@ -450,223 +450,223 @@ function countPaidGamesOwners () {
     return retVal.map( function(retVal) { return retVal.average; })[0];
 }
 
-
-function getMostFrequentGenres () {
-    var retVal = db.steam_aggregate.aggregate(
-        [
-            {
-                $project: {
-                    "name": "$name",
-                    "genres": "$genres"
-                }
-            }
-            ,
-            {
-                $unwind:  "$genres"
-            }
-            ,
-            {
-                $group: {
-                    "_id": "$genres", 
-                    "name": {$push: "$name"}
-                }
-            }
-            ,
-            {
-                $project: {
-                    "_id": "$_id", 
-                    "number_of_games": {$size: "$name"}
-                }
-            }
-            ,
-            {
-                $sort: {"number_of_games": -1}
-            }
-            ,
-            {
-                $limit: 10
-            }
-            ,
-            {
-                $project: {
-                    "_id": "$_id"
-                }
-            }
-        ]
-    );
-            
-    retVal = retVal.map( function(retVal) { return retVal._id; });
-    var temp = ["", "", "", "", "", "", "", "", "", ""];
-    for (var i = 0; i < 10; ++i) {
-        temp[i] = retVal[i];
-    }
-    retVal = temp;
-    
-    return retVal;
-}
-
-
-function getGamesWithMostHoursByGenres (genre) {
-    var retVal = db.steam_aggregate.aggregate(
-        [
-            {
-                $project: {
-                    "name": "$name",
-                    "genres": "$genres", 
-                    "hours": "$spy_data.average_forever"
-                }
-            }
-            ,
-            {
-                $match: {"genres": genre}
-            }
-            ,
-            {
-                $sort: {"hours": -1}
-            }
-            ,
-            {
-                $limit: 5
-            }
-            ,
-            {
-                $project: {"_id": "$name"}
-            }
-        ]
-    );
-            
-    retVal = retVal.map( function(retVal) { return retVal._id; });
-    var temp = ["", "", "", "", ""];
-    for (var i = 0; i < 5; ++i) {
-        temp[i] = retVal[i];
-    }
-    retVal = temp;
-    
-    return retVal;
-}
-
-
-function getAveragePriceForGenre (genre) {
-    var retVal =  db.steam_aggregate.aggregate(
-        [
-            {
-                $project: {
-                    "name": "$name",
-                    "genres": "$genres", 
-                    "price": "$spy_data.price"
-                }
-            }
-            ,
-            {
-                $match: {"genres": genre}
-            }
-            ,
-            {
-                $group: {
-                    "_id": genre, 
-                    "average_price": {$avg: "$price"}
-                }
-            }
-            ,
-            {
-                $project: {"_id": "$average_price"}
-            }
-        ]
-    );
-
-    return retVal.map( function(retVal) { return retVal._id; })[0];
-}
-
-
-function getAvgDevsPerPublisher() {
-    var retVal = db.steam_aggregate.aggregate(
-        [
-            {
-                $project: {
-                    "developers": "$developers", 
-                    "publishers": "$publishers"
-                }
-            }
-            ,
-            {
-                $unwind: "$developers"
-            }
-            ,
-            {
-                $unwind: "$publishers"
-            }
-            ,
-            {
-                $group: {
-                    "_id": "$publishers", 
-                    "developers": {$addToSet: "$developers"}
-                }
-            }
-            ,
-            {
-                $project: {
-                    "_id": "$_id", 
-                    "number_of_devs": {$size: "$developers"}
-                }
-            }
-            ,
-            {
-                $group: {
-                    "_id": "devs_per_publisher", 
-                    "avg": {$avg: "$number_of_devs"}
-                }
-            }
-        ]
-    );
-            
-    return retVal.map( function(retVal) { return retVal.avg; })[0];
-}
-
-
-function getAvgPubsPerDeveloper() {
-    var retVal = db.steam_aggregate.aggregate(
-        [
-            {
-                $project: {
-                    "developers": "$developers", 
-                    "publishers": "$publishers"
-                }
-            }
-            ,
-            {
-                $unwind: "$developers"
-            }
-            ,
-            {
-                $unwind: "$publishers"
-            }
-            ,
-            {
-                $group: {
-                    "_id": "$developers", 
-                    "publishers": {$addToSet: "$publishers"}
-                }
-            }
-            ,
-            {
-                $project: {
-                    "_id": "$_id", 
-                    "number_of_devs": {$size: "$publishers"}
-                }
-            }
-            ,
-            {
-                $group: {
-                    "_id": "devs_per_publisher", 
-                    "avg": {$avg: "$number_of_devs"}
-                }
-            }
-        ]
-    );
-            
-    return retVal.map( function(retVal) { return retVal.avg; })[0];
-}
-
+
+function getMostFrequentGenres () {
+    var retVal = db.steam_aggregate.aggregate(
+        [
+            {
+                $project: {
+                    "name": "$name",
+                    "genres": "$genres"
+                }
+            }
+            ,
+            {
+                $unwind:  "$genres"
+            }
+            ,
+            {
+                $group: {
+                    "_id": "$genres", 
+                    "name": {$push: "$name"}
+                }
+            }
+            ,
+            {
+                $project: {
+                    "_id": "$_id", 
+                    "number_of_games": {$size: "$name"}
+                }
+            }
+            ,
+            {
+                $sort: {"number_of_games": -1}
+            }
+            ,
+            {
+                $limit: 10
+            }
+            ,
+            {
+                $project: {
+                    "_id": "$_id"
+                }
+            }
+        ]
+    );
+            
+    retVal = retVal.map( function(retVal) { return retVal._id; });
+    var temp = ["", "", "", "", "", "", "", "", "", ""];
+    for (var i = 0; i < 10; ++i) {
+        temp[i] = retVal[i];
+    }
+    retVal = temp;
+    
+    return retVal;
+}
+
+
+function getGamesWithMostHoursByGenres (genre) {
+    var retVal = db.steam_aggregate.aggregate(
+        [
+            {
+                $project: {
+                    "name": "$name",
+                    "genres": "$genres", 
+                    "hours": "$spy_data.average_forever"
+                }
+            }
+            ,
+            {
+                $match: {"genres": genre}
+            }
+            ,
+            {
+                $sort: {"hours": -1}
+            }
+            ,
+            {
+                $limit: 5
+            }
+            ,
+            {
+                $project: {"_id": "$name"}
+            }
+        ]
+    );
+            
+    retVal = retVal.map( function(retVal) { return retVal._id; });
+    var temp = ["", "", "", "", ""];
+    for (var i = 0; i < 5; ++i) {
+        temp[i] = retVal[i];
+    }
+    retVal = temp;
+    
+    return retVal;
+}
+
+
+function getAveragePriceForGenre (genre) {
+    var retVal =  db.steam_aggregate.aggregate(
+        [
+            {
+                $project: {
+                    "name": "$name",
+                    "genres": "$genres", 
+                    "price": "$spy_data.price"
+                }
+            }
+            ,
+            {
+                $match: {"genres": genre}
+            }
+            ,
+            {
+                $group: {
+                    "_id": genre, 
+                    "average_price": {$avg: "$price"}
+                }
+            }
+            ,
+            {
+                $project: {"_id": "$average_price"}
+            }
+        ]
+    );
+
+    return retVal.map( function(retVal) { return retVal._id; })[0];
+}
+
+
+function getAvgDevsPerPublisher() {
+    var retVal = db.steam_aggregate.aggregate(
+        [
+            {
+                $project: {
+                    "developers": "$developers", 
+                    "publishers": "$publishers"
+                }
+            }
+            ,
+            {
+                $unwind: "$developers"
+            }
+            ,
+            {
+                $unwind: "$publishers"
+            }
+            ,
+            {
+                $group: {
+                    "_id": "$publishers", 
+                    "developers": {$addToSet: "$developers"}
+                }
+            }
+            ,
+            {
+                $project: {
+                    "_id": "$_id", 
+                    "number_of_devs": {$size: "$developers"}
+                }
+            }
+            ,
+            {
+                $group: {
+                    "_id": "devs_per_publisher", 
+                    "avg": {$avg: "$number_of_devs"}
+                }
+            }
+        ]
+    );
+            
+    return retVal.map( function(retVal) { return retVal.avg; })[0];
+}
+
+
+function getAvgPubsPerDeveloper() {
+    var retVal = db.steam_aggregate.aggregate(
+        [
+            {
+                $project: {
+                    "developers": "$developers", 
+                    "publishers": "$publishers"
+                }
+            }
+            ,
+            {
+                $unwind: "$developers"
+            }
+            ,
+            {
+                $unwind: "$publishers"
+            }
+            ,
+            {
+                $group: {
+                    "_id": "$developers", 
+                    "publishers": {$addToSet: "$publishers"}
+                }
+            }
+            ,
+            {
+                $project: {
+                    "_id": "$_id", 
+                    "number_of_devs": {$size: "$publishers"}
+                }
+            }
+            ,
+            {
+                $group: {
+                    "_id": "devs_per_publisher", 
+                    "avg": {$avg: "$number_of_devs"}
+                }
+            }
+        ]
+    );
+            
+    return retVal.map( function(retVal) { return retVal.avg; })[0];
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Ispisne funkcije
@@ -765,87 +765,87 @@ function pitanje6 () {
     print ("Zakljucak: ");
     print ("Igre koje su besplatne " + ((besplatne > platne) ? ("jesu") : ("nisu")) + " posedovane od strane više korisnika. ");
     print ("");
-}
-
-
-function pitanje7 () {
-    var zanr = getMostFrequentGenres();
-
-    print ("Pitanje 7");
-    print ("");
-    print ("Koji žanrovi imaju najviše igara?");
-    print ("10 žanrova sa najviše igara su: ");
-    print ("" + zanr + ". ");
-    print ("");
-    print ("Zakljucak: ");
-    print ("Žanr sa najviše igara je: " + zanr[0]);
-    print ("");
-}
-
-
-function pitanje8 () {
-    var zanrovi = getMostFrequentGenres();
-    var igre; 
-
-    print ("Pitanje 8");
-    print ("");
-    print ("Za 10 žanrova sa najviše igara, kojih 5 igara po žanru imaju najviše sati u igri?");
-    
-    
-    for (var i = 0; i < 10; ++i) {
-        print ("");
-        igre = getGamesWithMostHoursByGenres(zanrovi[i]);
-        print (" * Zanr: " + zanrovi[i]);
-        for (var j = 0; j < 5; ++j) {
-            print ("    " + igre[j])
-        }
-    }
-    
-    print ("");
-}
-
-
-function pitanje9 () {
-    var zanrovi = getMostFrequentGenres();
-    var cena;
-
-    print ("Pitanje 9");
-    print ("");
-    print ("Za 10 žanrova sa najviše igara, koja je prosecna cena igre?");
-    
-    print ("");
-    for (var i = 0; i < 10; ++i) {
-//         cena = (int)getAveragePriceForGenre(zanrovi[i]);
-        cena = parseInt(getAveragePriceForGenre(zanrovi[i]), 10) / 100.0;
-        print (" * " + zanrovi[i] + " - " + cena + "$");
-    }
-    
-    print ("");
-}
-
-
-function pitanje10 () {
-    var rez = getAvgDevsPerPublisher();
-
-    print ("Pitanje 10");
-    print ("");
-    print ("Sa koliko razvojnih studija prosecno saraduje jedna izdavacka kuca?");
-    print ("");
-    print ("Prosecna izdavacka kuca saraduje sa " + rez + " razvojnih timova. ");
-    print ("");
-}
-
-
-function pitanje11 () {
-    var rez = getAvgPubsPerDeveloper();
-
-    print ("Pitanje 11");
-    print ("");
-    print ("Sa koliko izdavackih kuca prosecno saraduje jedan razvojni studio?");
-    print ("");
-    print ("Prosecna razvojni studio saraduje sa " + rez + " izdavackih kuca. ");
-    print ("");
-}
+}
+
+
+function pitanje7 () {
+    var zanr = getMostFrequentGenres();
+
+    print ("Pitanje 7");
+    print ("");
+    print ("Koji žanrovi imaju najviše igara?");
+    print ("10 žanrova sa najviše igara su: ");
+    print ("" + zanr + ". ");
+    print ("");
+    print ("Zakljucak: ");
+    print ("Žanr sa najviše igara je: " + zanr[0]);
+    print ("");
+}
+
+
+function pitanje8 () {
+    var zanrovi = getMostFrequentGenres();
+    var igre; 
+
+    print ("Pitanje 8");
+    print ("");
+    print ("Za 10 žanrova sa najviše igara, kojih 5 igara po žanru imaju najviše sati u igri?");
+    
+    
+    for (var i = 0; i < 10; ++i) {
+        print ("");
+        igre = getGamesWithMostHoursByGenres(zanrovi[i]);
+        print (" * Zanr: " + zanrovi[i]);
+        for (var j = 0; j < 5; ++j) {
+            print ("    " + igre[j])
+        }
+    }
+    
+    print ("");
+}
+
+
+function pitanje9 () {
+    var zanrovi = getMostFrequentGenres();
+    var cena;
+
+    print ("Pitanje 9");
+    print ("");
+    print ("Za 10 žanrova sa najviše igara, koja je prosecna cena igre?");
+    
+    print ("");
+    for (var i = 0; i < 10; ++i) {
+//         cena = (int)getAveragePriceForGenre(zanrovi[i]);
+        cena = parseInt(getAveragePriceForGenre(zanrovi[i]), 10) / 100.0;
+        print (" * " + zanrovi[i] + " - " + cena + "$");
+    }
+    
+    print ("");
+}
+
+
+function pitanje10 () {
+    var rez = getAvgDevsPerPublisher();
+
+    print ("Pitanje 10");
+    print ("");
+    print ("Sa koliko razvojnih studija prosecno saraduje jedna izdavacka kuca?");
+    print ("");
+    print ("Prosecna izdavacka kuca saraduje sa " + rez + " razvojnih timova. ");
+    print ("");
+}
+
+
+function pitanje11 () {
+    var rez = getAvgPubsPerDeveloper();
+
+    print ("Pitanje 11");
+    print ("");
+    print ("Sa koliko izdavackih kuca prosecno saraduje jedan razvojni studio?");
+    print ("");
+    print ("Prosecna razvojni studio saraduje sa " + rez + " izdavackih kuca. ");
+    print ("");
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -863,20 +863,20 @@ pitanje4();
 
 pitanje5();
 
-pitanje6();
-
+pitanje6();
+
 pitanje7();
-
-pitanje8 ();
-
-pitanje9 ();
-
-pitanje10 ();
-
+
+pitanje8 ();
+
+pitanje9 ();
+
+pitanje10 ();
+
 pitanje11 ();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Development 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
+
+
