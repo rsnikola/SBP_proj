@@ -546,9 +546,38 @@ function getGamesWithMostHoursByGenres (genre) {
 }
 
 
+function getAveragePriceForGenre (genre) {
+    var retVal =  db.steam_aggregate.aggregate(
+        [
+            {
+                $project: {
+                    "name": "$name",
+                    "genres": "$genres", 
+                    "price": "$spy_data.price"
+                }
+            }
+            ,
+            {
+                $match: {"genres": genre}
+            }
+            ,
+            {
+                $group: {
+                    "_id": genre, 
+                    "average_price": {$avg: "$price"}
+                }
+            }
+            ,
+            {
+                $project: {"_id": "$average_price"}
+            }
+        ]
+    );
 
+    return retVal.map( function(retVal) { return retVal._id; })[0];
+}
 
-
+getAveragePriceForGenre("Action");
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Ispisne funkcije
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -683,7 +712,28 @@ function pitanje8 () {
     }
     
     print ("");
-}
+}
+
+
+function pitanje9 () {
+    var zanrovi = getMostFrequentGenres();
+    var cena;
+
+    print ("Pitanje 9");
+    print ("");
+    print ("Za 10 žanrova sa najviše igara, koja je prosecna cena igre?");
+    
+    print ("");
+    for (var i = 0; i < 10; ++i) {
+//         cena = (int)getAveragePriceForGenre(zanrovi[i]);
+        cena = parseInt(getAveragePriceForGenre(zanrovi[i]), 10) / 100.0;
+        print (" * " + zanrovi[i] + " - " + cena + "$");
+    }
+    
+    print ("");
+}
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Poziv ispisa 
@@ -704,7 +754,9 @@ pitanje6();
 
 pitanje7();
 
-pitanje8 ();
+pitanje8 ();
+
+pitanje9 ();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Development 
@@ -718,12 +770,6 @@ pitanje8 ();
 
 
 
-
-
-
-
-
-
 
 
 
