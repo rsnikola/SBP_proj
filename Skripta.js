@@ -577,7 +577,97 @@ function getAveragePriceForGenre (genre) {
     return retVal.map( function(retVal) { return retVal._id; })[0];
 }
 
-getAveragePriceForGenre("Action");
+
+function getAvgDevsPerPublisher() {
+    var retVal = db.steam_aggregate.aggregate(
+        [
+            {
+                $project: {
+                    "developers": "$developers", 
+                    "publishers": "$publishers"
+                }
+            }
+            ,
+            {
+                $unwind: "$developers"
+            }
+            ,
+            {
+                $unwind: "$publishers"
+            }
+            ,
+            {
+                $group: {
+                    "_id": "$publishers", 
+                    "developers": {$addToSet: "$developers"}
+                }
+            }
+            ,
+            {
+                $project: {
+                    "_id": "$_id", 
+                    "number_of_devs": {$size: "$developers"}
+                }
+            }
+            ,
+            {
+                $group: {
+                    "_id": "devs_per_publisher", 
+                    "avg": {$avg: "$number_of_devs"}
+                }
+            }
+        ]
+    );
+            
+    return retVal.map( function(retVal) { return retVal.avg; })[0];
+}
+
+
+function getAvgPubsPerDeveloper() {
+    var retVal = db.steam_aggregate.aggregate(
+        [
+            {
+                $project: {
+                    "developers": "$developers", 
+                    "publishers": "$publishers"
+                }
+            }
+            ,
+            {
+                $unwind: "$developers"
+            }
+            ,
+            {
+                $unwind: "$publishers"
+            }
+            ,
+            {
+                $group: {
+                    "_id": "$developers", 
+                    "publishers": {$addToSet: "$publishers"}
+                }
+            }
+            ,
+            {
+                $project: {
+                    "_id": "$_id", 
+                    "number_of_devs": {$size: "$publishers"}
+                }
+            }
+            ,
+            {
+                $group: {
+                    "_id": "devs_per_publisher", 
+                    "avg": {$avg: "$number_of_devs"}
+                }
+            }
+        ]
+    );
+            
+    return retVal.map( function(retVal) { return retVal.avg; })[0];
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Ispisne funkcije
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -733,6 +823,29 @@ function pitanje9 () {
     print ("");
 }
 
+
+function pitanje10 () {
+    var rez = getAvgDevsPerPublisher();
+
+    print ("Pitanje 10");
+    print ("");
+    print ("Sa koliko razvojnih studija prosecno saraduje jedna izdavacka kuca?");
+    print ("");
+    print ("Prosecna izdavacka kuca saraduje sa " + rez + " razvojnih timova. ");
+    print ("");
+}
+
+
+function pitanje11 () {
+    var rez = getAvgPubsPerDeveloper();
+
+    print ("Pitanje 11");
+    print ("");
+    print ("Sa koliko izdavackih kuca prosecno saraduje jedan razvojni studio?");
+    print ("");
+    print ("Prosecna razvojni studio saraduje sa " + rez + " izdavackih kuca. ");
+    print ("");
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -756,102 +869,14 @@ pitanje7();
 
 pitanje8 ();
 
-pitanje9 ();
+pitanje9 ();
+
+pitanje10 ();
+
+pitanje11 ();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Development 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
