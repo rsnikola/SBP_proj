@@ -495,16 +495,60 @@ function getMostFrequentGenres () {
         ]
     );
             
+    retVal = retVal.map( function(retVal) { return retVal._id; });
     var temp = ["", "", "", "", "", "", "", "", "", ""];
     for (var i = 0; i < 10; ++i) {
         temp[i] = retVal[i];
     }
     retVal = temp;
     
-    return retVal;//.map( function(retVal) { return retVal._id; })[0];
+    return retVal;
 }
 
-getMostFrequentGenres();
+
+function getGamesWithMostHoursByGenres (genre) {
+    var retVal = db.steam_aggregate.aggregate(
+        [
+            {
+                $project: {
+                    "name": "$name",
+                    "genres": "$genres", 
+                    "hours": "$spy_data.average_forever"
+                }
+            }
+            ,
+            {
+                $match: {"genres": genre}
+            }
+            ,
+            {
+                $sort: {"hours": -1}
+            }
+            ,
+            {
+                $limit: 5
+            }
+            ,
+            {
+                $project: {"_id": "$name"}
+            }
+        ]
+    );
+            
+    retVal = retVal.map( function(retVal) { return retVal._id; });
+    var temp = ["", "", "", "", ""];
+    for (var i = 0; i < 5; ++i) {
+        temp[i] = retVal[i];
+    }
+    retVal = temp;
+    
+    return retVal;
+}
+
+
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Ispisne funkcije
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -602,8 +646,44 @@ function pitanje6 () {
     print ("Zakljucak: ");
     print ("Igre koje su besplatne " + ((besplatne > platne) ? ("jesu") : ("nisu")) + " posedovane od strane više korisnika. ");
     print ("");
+}
+
+
+function pitanje7 () {
+    var zanr = getMostFrequentGenres();
+
+    print ("Pitanje 7");
+    print ("");
+    print ("Koji žanrovi imaju najviše igara?");
+    print ("10 žanrova sa najviše igara su: ");
+    print ("" + zanr + ". ");
+    print ("");
+    print ("Zakljucak: ");
+    print ("Žanr sa najviše igara je: " + zanr[0]);
+    print ("");
+}
+
+
+function pitanje8 () {
+    var zanrovi = getMostFrequentGenres();
+    var igre; 
+
+    print ("Pitanje 8");
+    print ("");
+    print ("Za 10 žanrova sa najviše igara, kojih 5 igara po žanru imaju najviše sati u igri?");
+    
+    
+    for (var i = 0; i < 10; ++i) {
+        print ("");
+        igre = getGamesWithMostHoursByGenres(zanrovi[i]);
+        print (" * Zanr: " + zanrovi[i]);
+        for (var j = 0; j < 5; ++j) {
+            print ("    " + igre[j])
+        }
+    }
+    
+    print ("");
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Poziv ispisa 
@@ -620,9 +700,11 @@ pitanje4();
 
 pitanje5();
 
-pitanje6();
-
- 
+pitanje6();
+
+pitanje7();
+
+pitanje8 ();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Development 
@@ -630,51 +712,6 @@ pitanje6();
 
 
 
-
-
-
-db.steam_aggregate.aggregate(
-        [
-            {
-                $project: {
-                    "name": "$name",
-                    "genres": "$genres"
-                }
-            }
-            ,
-            {
-                $unwind:  "$genres"
-            }
-            ,
-            {
-                $group: {
-                    "_id": "$genres", 
-                    "name": {$push: "$name"}
-                }
-            }
-            ,
-            {
-                $project: {
-                    "_id": "$_id", 
-                    "number_of_games": {$size: "$name"}
-                }
-            }
-            ,
-            {
-                $sort: {"number_of_games": -1}
-            }
-            ,
-            {
-                $limit: 5
-            }
-            ,
-            {
-                $project: {
-                    "_id": "$_id"
-                }
-            }
-        ]
-    );
 
 
 
